@@ -1,0 +1,45 @@
+module fibonacci_series #(parameter N = 100)
+    (
+        input i_clock,
+        input i_reset,
+        input i_valid,
+        output [15:0] o_series,
+        output [7:0] o_number
+    );
+    
+    reg [31:0] r_curr_val, r_prev_val;
+    reg [$clog2(N) -1 : 0] r_count;
+    
+    always @(posedge i_clock or negedge i_reset) 
+    begin
+        if (~i_reset)
+        begin
+            r_curr_val <= 0 ;
+            r_prev_val <= 1 ;
+            r_count    <= 0 ;
+        end 
+        else begin if (i_valid) begin
+            if (r_count > 0 && r_count < N) 
+            begin
+                r_curr_val <= r_curr_val + r_prev_val ;
+                r_prev_val <= r_curr_val ;
+                r_count    <= r_count + 1 ;
+            end 
+            else begin
+                r_curr_val <= r_curr_val ;
+                r_prev_val <= r_prev_val ;
+                r_count    <= r_count + 1 ;            
+            end 
+            end
+            else begin
+                r_curr_val <= r_curr_val ;
+                r_prev_val <= r_prev_val ;
+                r_count    <= r_count ;            
+            end
+        end 
+    end  
+    
+    assign o_series = r_curr_val ;
+    assign o_number = r_count ;
+    
+endmodule
